@@ -106,36 +106,19 @@
 						( xhr.status >= 200 && xhr.status < 300 ) ||
 						( xhr.status === 0 && xhr.responseText !== '')
 					) {
-						path = url.substr( 0, url.lastIndexOf( "/" ) );
-						html = ( new DOMParser ).parseFromString(
-							xhr.responseText, 'text/html'
-						);
-						if ( fragment !== '' ) {
-							nodes = html.querySelectorAll( fragment );
-						} else {
-							nodes = html.querySelector( 'body' ).childNodes;
-						}
-						if ( !replace ) {
-							target.innerHTML = '';
-						}
-						for ( var i = 0, c = nodes.length; i < c; i++ ) {
-							convertUrls( nodes[i], path );
-							node = document.importNode( nodes[i], true );
-							replace
-								? target.parentNode.insertBefore( node, target )
-								: target.appendChild( node );
 
-							if ( options.async ) {
-								Reveal.sync();
-								Reveal.setState( Reveal.getState() );
-							}
+						// create a DOM Text node:
+						var text_node = document.createTextNode(xhr.responseText);
 
-							if ( node instanceof Element ) {
-								loadExternal( node, path );
-							}
-						}
-						if ( replace ) {
-							target.parentNode.removeChild( target );
+						// clear target old content
+						target.innerHTML = '';
+
+						// append the text node to target:
+						target.appendChild(text_node);
+
+						if ( options.async ) {
+							Reveal.sync();
+							Reveal.setState( Reveal.getState() );
 						}
 					}
 					else {
